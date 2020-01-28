@@ -8,8 +8,8 @@ tags:
 categories: 
 - hexo 
 keywords: 
--github
--hexo 	
+- github
+- hexo
 excerpt: 主要记录在借助hexo和GitHub Pages的部署过程中遇到的问题以及解决办法
 ---
 
