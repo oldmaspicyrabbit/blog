@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>《HTML5 WebSocket权威指南》读书笔记 part 3 | oldmaspicyrabbit&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="《HTML5 WebSocket权威指南》读书笔记第二部分，主要是为什么要用websocket例子的搭建，最主要都是代码验证了构建远程JS控制台">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《HTML5 WebSocket权威指南》读书笔记 part 3">
+<meta property="og:url" content="https://oldmaspicyrabbit.github.io/blog/2020/02/01/%E3%80%8AHTML5-WebSocket%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E3%80%8B%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0-part-3/index.html">
+<meta property="og:site_name" content="oldmaspicyrabbit&#39;s blog">
+<meta property="og:description" content="《HTML5 WebSocket权威指南》读书笔记第二部分，主要是为什么要用websocket例子的搭建，最主要都是代码验证了构建远程JS控制台">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.niupic.com/images/2020/01/31/6mep.jpg">
+<meta property="og:image" content="https://nats.io/img/documentation/nats-queue.png">
+<meta property="og:image" content="https://nats.io/img/documentation/nats-pub-sub.png">
+<meta property="og:image" content="https://nats.io/img/documentation/nats-req-rep.png">
+<meta property="article:published_time" content="2020-02-01T09:45:00.000Z">
+<meta property="article:modified_time" content="2020-02-01T01:48:25.804Z">
+<meta property="article:author" content="oldmaspicyrabbit">
+<meta property="article:tag" content="websocket">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.niupic.com/images/2020/01/31/6mep.jpg">
+  
+    <link rel="alternate" href="/blog/atom.xml" title="oldmaspicyrabbit&#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/blog/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/blog/" id="logo">oldmaspicyrabbit&#39;s blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/blog/">Home</a>
+        
+          <a class="main-nav-link" href="/blog/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/blog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://oldmaspicyrabbit.github.io/blog"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-《HTML5-WebSocket权威指南》读书笔记-part-3" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/blog/2020/02/01/%E3%80%8AHTML5-WebSocket%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E3%80%8B%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0-part-3/" class="article-date">
+  <time class="dt-published" datetime="2020-02-01T09:45:00.000Z" itemprop="datePublished">2020-02-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/blog/categories/web/">web</a>►<a class="article-category-link" href="/blog/categories/web/booknotes/">booknotes</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      《HTML5 WebSocket权威指南》读书笔记 part 3
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="用XMPP构建WebSocket上的即时消息和聊天"><a href="#用XMPP构建WebSocket上的即时消息和聊天" class="headerlink" title="用XMPP构建WebSocket上的即时消息和聊天"></a>用XMPP构建WebSocket上的即时消息和聊天</h1><h2 id="TCP上的互联网应用层协议的典型分层"><a href="#TCP上的互联网应用层协议的典型分层" class="headerlink" title="TCP上的互联网应用层协议的典型分层"></a>TCP上的互联网应用层协议的典型分层</h2><p>展示了TCP上的互联网应用层协议的典型分层方式包含HTTP有两个原因。<br><img src="https://i.niupic.com/images/2020/01/31/6mep.jpg" alt="应用层协议的典型分层"><br>其一，它说明HTTP作为TCP之上的一个应用层协议，可以直接用于Web应用程序中。AJAX应用程序中将HTTP当作所有网络交互的主要或唯一协议。<br>其二，使用WebSocket的应用程序不需要完全忽略HTTP。静态资源总是通过HTTP加载。例如，即使你选择使用WebSocket进行通信，HTML、JavaScript和装饰用户界面的CSS仍然可以通过HTTP提供。因此，在应用协议栈中，你可以在TLS和TCP上使用HTTP及WebSocket。  </p>
+<h2 id="XMPP：XML的流化"><a href="#XMPP：XML的流化" class="headerlink" title="XMPP：XML的流化"></a>XMPP：XML的流化</h2><h3 id="XMPP如何将XML文档语法用于实时通信呢？"><a href="#XMPP如何将XML文档语法用于实时通信呢？" class="headerlink" title="XMPP如何将XML文档语法用于实时通信呢？"></a>XMPP如何将XML文档语法用于实时通信呢？</h3><p>实现方法之一是用单独的文档发送每条消息。然而，这种方法可能出现不必要的冗长文档，浪费资源。<br>另一种方法是将对话当作一个长文档，随着时间推移和消息传输而增长，这是XMPP对文档语法的处理方式。XMPP连接期间的双向对话各方都由一个流化XML文档表示，这个文档在连接终止时结束。该流化文档的根节点是一个＜stream/＞元素。流的最高级子节点是协议的单独数据单位，称作“节”（stanza）。</p>
+<h3 id="选择连接性策略"><a href="#选择连接性策略" class="headerlink" title="选择连接性策略"></a>选择连接性策略</h3><p>用WebSocket连接XMPP服务器有两种方法：修改XMPP服务器以接受WebSocket连接，或者使用代理服务器。选择连接性策略时，理解WebSocket消息（通常由单个WebSocket帧组成）与XMPP节的对齐方式很重要，因为在上述两种方法中对齐的方式是不同的。</p>
+<ul>
+<li>在WebSocket感知的XMPP服务器中，节被一对一映射到WebSocket消息上，每条WebSocket消息包含一节，没有重叠或者碎片。  </li>
+<li>在网关方案中，节与消息的对齐不是必需的，因为它将WebSocket中转到TCP，反之亦然。TCP没有消息边界，所以TCP流可能随意地分割到WebSocket消息中。然而，在网关的情况下，客户端必须理解流化的XML，将字符重组为节。  </li>
+</ul>
+<p>许多IM网络都是“围墙花园”。在特定网络上有账户的用户才能相互交谈。与此相反，Jabber（http：//<a href="http://www.jabber.org）是一个联盟网络，也就是说，如果服务器相互协作，在独立操作服务器上的用户可以通信。" target="_blank" rel="noopener">www.jabber.org）是一个联盟网络，也就是说，如果服务器相互协作，在独立操作服务器上的用户可以通信。</a>  </p>
+<p>连接到Google Talk你可能从Gmail和Google+中熟悉了Google Talk聊天服务，它是JabberIM网络的一部分。有一个公众可以访问的XMPP服务器监听talk.google.com上的5222端口，如果有一个Google账户，你就可以将任何兼容的XMPP客户端连接到该地址并登录。为了将你自己的Web客户端连接到Google Talk，可以将WebSocket代理服务器指向该地址。该服务器需要加密，所以一定要配置代理服务器通过TLS连接。  </p>
+<p>具体例子代码因为涉及到Strophe.js，并没有时间去深入研究，所以不赘述。日后有兴趣再来翻看，验证。</p>
+<h1 id="用STOMP通过WebSocket传递消息"><a href="#用STOMP通过WebSocket传递消息" class="headerlink" title="用STOMP通过WebSocket传递消息"></a>用STOMP通过WebSocket传递消息</h1><p>消息传递（messaging）是一种架构风格，特征是在独立的组件之间发送异步消息，实现松耦合的系统。消息为通信模式提供了一个抽象层，从而为编写网络应用程序提供了一种非常灵活而强大的手段。<br>消息传递中的关键是消息代理和客户端。消息代理（broker）接受客户端的连接，处理来自客户端的消息，并向客户端发送消息。代理还能处理验证、授权、消息加密、可靠消息传递、消息流量控制和分类等工作。当客户端连接到消息代理，它们能够将消息发送给代理，也能接受代理发送给它们的消息。这种模型称为发布/订阅（publish/subscribe），消息代理发布一些消息，客户端订阅所有消息，或者消息的一个子集。<br>PS:STOMP定义中的Text（文本）部分说明该协议是面向文本的。第6章（重点是RFB协议）描述了在WebSocket上使用面向二进制协议的方法。  </p>
+<h2 id="什么是发布-订阅模式"><a href="#什么是发布-订阅模式" class="headerlink" title="什么是发布/订阅模式"></a>什么是发布/订阅模式</h2><p>在消息的世界里，有两种常用的消息传播技术。  </p>
+<ul>
+<li>队列：向单个消费者传递消息的传播机制。任意数量的客户端（发布者）可以向队列发布消息，但是每条消息只能由一个客户端（消费者）接收。<br><img src="https://nats.io/img/documentation/nats-queue.png" alt="Queue模式">  </li>
+<li>主题：向多个消费者传递消息的传播机制。任意数量的客户端（发布者）可以向一个主题发布消息，任何数量的客户端（消费者）可以接收消息。<br><img src="https://nats.io/img/documentation/nats-pub-sub.png" alt="Topic模式"><br>其实还有一种模式，书中没有讲到，请求回复模式。</li>
+<li>请求：向指定多个消费者传递消息的传播机制。客户端（发布者）可以指定向有几个客户端（消费者）可以收到。发送应答模式采用同步调用。<br><img src="https://nats.io/img/documentation/nats-req-rep.png" alt="Request Reply模式">    </li>
+</ul>
+<h2 id="STOMP简介"><a href="#STOMP简介" class="headerlink" title="STOMP简介"></a>STOMP简介</h2><p>STOMP是一种开放消息传递协议，最初被开发用于Apache ActiveMQ，后来被广泛传播到其他系统上。STOMP没有主题或者队列。STOMP消息从不同目标发送和接收，STOMP服务器决定这些目标的行为。STOMP：面向简单（或者流化）文本的消息传递协议。而企业中最广泛使用的消息传递API是JMS：Java Message Service （Java消息服务）。与通过定义线路协议提升互操作性的STOMP不同，JMS只是一个API。STOMP已经用多种语言实现；因为JMS的本质是一个API，它几乎统治了Java世界。</p>
+<p>结合使用STOMP和ActiveMQ。ActiveMQ使用目标名称输出消息传递特性，包括主题和队列、临时目标和层次化订阅。可以任何TCP级协议的相同方式在WebSocket上添加STOMP层，或者进行对齐，使每个STOMP帧正好占据一个WebSocket帧。</p>
+<p>to be continued: 建一个应用程序，使用户能够玩一个流行的游戏—石头-布<br>暂时没有时间完成，但是很有兴趣通过STOMP以及ActiveMQ来实现这个游戏。</p>
+<h1 id="用远程帧缓冲协议实现VNC"><a href="#用远程帧缓冲协议实现VNC" class="headerlink" title="用远程帧缓冲协议实现VNC"></a>用远程帧缓冲协议实现VNC</h1><p>使用VNC（Virtual Network Computing，虚拟网络计算）允许你在任何网络上共享桌面。它本质上允许你远程查看和控制另一台计算机的界面，可以看作和Telnet等价的GUI（图形用户界面）。你还可以将VNC看作一根很长的虚拟电缆，可以用它的鼠标、键盘和视频信号查看和控制另一个桌面。使用WebSocket和远程帧缓冲（RemoteFramebuffer，RFB）协议将VNC扩展到Web上的方法。这章主要是示例作为一个二进制协议，RFB如何以不同于前面两章中讨论过的面向文本协议的方式使用WebSocket API。  </p>
+<h3 id="RFB是什么"><a href="#RFB是什么" class="headerlink" title="RFB是什么"></a>RFB是什么</h3><p>远程帧缓冲协议（RFB）是IETF的一个信息规范（RFC 6143）。虽然它不是正式的标准，但是得到了广泛的应用，有许多可互操作的实现。RFC6143本身已经有10年以上的历史，经过了数次修订。我们先来分解一下协议的定义。帧缓冲（framebuffer）是一个数组，包含了图形化计算机系统显示的所有像素值，是台式机的最小共同模型。因此，RFB是远程访问帧缓冲的一种手段。对于任何有键盘、鼠标和屏幕的系统，都可能有一种利用RFB访问它的方法。<br>RFB是一个二进制协议，传输的是二进制图像数据。数据可以进行压缩，也可以随着高频率的更新流入或者流出服务器。<br> Wireshark支持RFB协议会话的分析，这在调试新的实现时可能很有用。<br><strong>具体示例需要暂时没有时间细究，略过</strong>。<br>需要注意的是当客户端已经可以接收帧缓冲，现在我们在客户端显示这些信息，使客户端能够查看来自RFB服务器（在我们的例子中是TightVNC）的GUI信息。＜canvas＞是HTML5中最重要的新元素之一。＜canvas＞元素支持一个2D绘图API，使HTML5应用程序具备操纵像素图形的能力。<br>在RFB协议中，PointerEvent表示移动或者指点设备（pointing device）按钮的按下或者释放。PointerEvent消息是二进制事件消息，由一个指定发送到服务器的消息种类（如指点设备点击、指点设备移动等）的消息类型字节，一个按钮掩码（携带指点设备1～8号按钮的当前状态，由第0位到第7位表示，0代表按钮弹起，1代表按钮按下），以及两个位置值（由表示屏幕相对的X坐标和Y坐标的无符号短整型组成）组成。</p>
+<h1 id="WebSocket安全性"><a href="#WebSocket安全性" class="headerlink" title="WebSocket安全性"></a>WebSocket安全性</h1><p>在Web上部署应用程序带来了安全性上的挑战，在决定使用WebSocket时你必须加以考虑。</p>
+<table>
+<thead>
+<tr>
+<th>攻击类型</th>
+<th>解决问题的WebSocketAPI或者协议特性</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>拒绝服务</td>
+<td>Origin(源)首标</td>
+</tr>
+<tr>
+<td>连接洪泛拒绝服务</td>
+<td>用Origin首标限制新连接</td>
+</tr>
+<tr>
+<td>代理服务器供给</td>
+<td>屏蔽</td>
+</tr>
+<tr>
+<td>中间人，窃听</td>
+<td>WebSocket安全(wss://)</td>
+</tr>
+<tr>
+<td>### WebSocket是什么（从安全性的角度）</td>
+<td></td>
+</tr>
+<tr>
+<td>WebSocket有许多可取的特性。它是一个简单、标准的全双工协议，开销很低，可以用于构建可伸缩、几乎实时的网络服务器。如果你是一位聪明的计算机专业学生或者稍作回忆，就会知道上述的好处也适用于普通而纯粹的TCP/IP。也就是说，它们是套接字（特别是SOCK_STREAM）的好处，而非WebSocket独有的。那么为什么要在“套接字”（Socket）前加上Web？为什么不简单地在TCP基础上构建传统的互联网应用程序呢？</td>
+<td></td>
+</tr>
+<tr>
+<td>要回答这个问题，我们需要区分“非特权”和“特权”应用程序代码。非特权代码是运行在已知源中的代码，通常是网页中运行的JavaScript。在Web安全性模型中，TCP连接无法被“非特权”代码安全地打开。如果允许非特权应用程序代码打开TCP连接，脚本就可以用伪造的首标发出HTTP请求，使其看上去好像来自不同的源。有了这种伪造首标的能力，相同的脚本可以重新在TCP上实现HTTP以避开规则，从而使控制脚本发起HTTP连接方式的规则变得毫无意义。允许从Web应用程序中发起TCP连接将会破坏源模型。</td>
+<td></td>
+</tr>
+<tr>
+<td>WebSocket连接从非特权代码中发起，因此和AJAX及其他允许在非特权代码中使用的网络功能遵循相同的模型。HTTP握手使连接的初始化在浏览器的控制下进行，允许浏览器设置源首标和保持源模型所需的首标。这样，WebSocket允许应用程序利用轻量级的双向连接实现互联网风格的网络，同时与HTTP应用程序、服务器和沙箱规则并存。</td>
+<td></td>
+</tr>
+<tr>
+<td>从特权代码建立的WebSocket连接一般可以打开任何网络连接；这种能力不是问题（至少对于Web不是问题），因为特权应用总是可以使用任何网络连接，必须由用户安装和执行。原生应用程序不运行于Web源，所以源规则不适用于从特权代码建立的WebSocket。</td>
+<td></td>
+</tr>
+<tr>
+<td>### 限制新连接</td>
+<td></td>
+</tr>
+<tr>
+<td>尽管源首标在HTTP层上阻止连接洪泛（flood），但是在TCP层上仍然有连接洪泛DoS攻击的潜在威胁。即使打开的TCP连接没有携带数据资源，最终被服务器拒绝，大量的客户端也可能淹没服务器。为了避免连接超载，WebSocket API要求浏览器限制打开的新连接。</td>
+<td></td>
+</tr>
+<tr>
+<td>### 屏蔽</td>
+<td></td>
+</tr>
+<tr>
+<td>WebSocket帧是WebSocket消息的组成部分。对从浏览器发往服务器的WebSocket帧进行屏蔽，以混淆帧内容，因为拦截流量的代理服务器可能被WebSocket流量所迷惑。屏蔽还有另一个不常见的微妙原因—它和安全性有关。我们知道有三类代理服务器：</td>
+<td></td>
+</tr>
+<tr>
+<td>+ 转发代理服务器：通常由服务器管理员安装、配置和控制。转发代理服务器将出站请求从内联网转发到互联网。</td>
+<td></td>
+</tr>
+<tr>
+<td>+ 反向代理服务器：通常由服务器管理员安装、配置和控制。反向代理服务器（或者防火墙）一般部署在服务器之前的停火区（DMZ），执行安全功能，以保护内部服务器免遭来自互联网的攻击。</td>
+<td></td>
+</tr>
+<tr>
+<td>+ 透明代理服务器：通常由网络操作员控制。透明代理服务器通常拦截网络通信用于缓冲，或者阻止公司内联网用户因为特定目的而访问Web。网络操作员可能使用透明代理服务器缓冲经常访问的网站，减少网络负载。</td>
+<td></td>
+</tr>
+<tr>
+<td>屏蔽主要是针对透明代理服务器的安全性。<em>HTTP缓存中毒</em>是一种攻击类型，攻击者尝试控制HTTP缓存，用危险的内容代替请求的资源。在WebSocket标准化进程中，一组研究人员撰写了一篇论文，概述了使用HTTP升级请求对透明拦截代理进行理论上的进攻，之后，缓存中毒变成了一个重大的问题。如何避免中毒？WebSocket协议中加入了屏蔽（masking），屏蔽是一种混淆（但不是加密）协议内容，以避免透明拦截代理发生混乱的技术。屏蔽将从浏览器发往WebSocket服务器的每条消息内容与随机字节进行异或运算，转换它们的载荷。</td>
+<td></td>
+</tr>
+<tr>
+<td>和源一样，屏蔽是一种安全特性，它不需要用于对付窃听的加密安全。通信双方和中间人在需要的时候能够理解屏蔽的载荷。然而，对于不理解屏蔽载荷的“中间人”，它们可以避免将WebSocket消息的内容错误地解释为HTTP请求和响应。</td>
+<td></td>
+</tr>
+<tr>
+<td>### TLS加强WebSocket安全性</td>
+<td></td>
+</tr>
+<tr>
+<td>HTTPS和WSS协议非常相似，两者都在通过TCP连接的TLS基础之上运行。为WebSocket线路流量配置TLS加密的方法与HTTP相同：使用证书。WebSocket协议在TCP（和HTTP类似）上运行，WSS连接运行在TLS上，而TLS运行在TCP之上。WebSocket协议与HTTP兼容，所以WebSocket连接使用相同的端口：WebSocket默认端口为80，而WebSocket安全（WSS）默认使用443端口。</td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><p>为了确认通过WebSocket连接到我们服务器的用户身份，WebSocket握手可以包含cookie首标。使用cookie首标使服务器能够在WebSocket验证中使用和验证HTTP请求中相同的cookie。作为替代，验证可以通过应用层协议，在WebSocket升级完成之后进行。XMPP和STOMP等协议层次中内建了识别用户和交换凭据的语义。<br>####应用级安全性<br>应用级安全性描述的是应用程序如何保护自身免遭可能暴露私有信息的攻击。这一级别的安全性保护由应用程序暴露的资源。如果你使用XMPP、STOMP或AMQP（Advanced Message QueueingProtocol，高级消息队列协议）等标准协议，可以在基于WebSocket的系统上利用应用级安全性。权限的配置和具体的服务器相关。  </p>
+<h1 id="部署的考虑"><a href="#部署的考虑" class="headerlink" title="部署的考虑"></a>部署的考虑</h1><p>WebSocket特别相关的部署特性，比如WebSocket模拟、代理和防火墙、负载均衡和容量规划。</p>
+<h3 id="用传输层安全（TLS或SSL）穿越代理和防火墙。"><a href="#用传输层安全（TLS或SSL）穿越代理和防火墙。" class="headerlink" title="用传输层安全（TLS或SSL）穿越代理和防火墙。"></a>用传输层安全（TLS或SSL）穿越代理和防火墙。</h3><p>代理通常分为两类：显式代理和透明代理。当浏览器显式配置为使用代理时，该代理服务器就是显式代理。对于显式代理，你必须向浏览器提供代理主机名称、端口号以及可选的用户名和密码。当浏览器没有意识到流量被代理拦截时，代理服务器就是透明的。即使流量必须穿越显式和透明代理，使用WSS也可能显著增加WebSocket成功的几率。  </p>
+<h3 id="部署TLS"><a href="#部署TLS" class="headerlink" title="部署TLS"></a>部署TLS</h3><p>部署TLS需要用于识别WebSocket服务器的加密数字证书。在生产环境中，这些证书必须由Web浏览器知晓并信任的证书机构（CA）签发 </p>
+<h3 id="WebSocket-ping和pong"><a href="#WebSocket-ping和pong" class="headerlink" title="WebSocket ping和pong"></a>WebSocket ping和pong</h3><p>连接可能因为许多你无法控制的原因而意外关闭。因为WebSocket连接处于TCP连接的上层，发生在TCP级别的连接问题会影响WebSocket连接。在客户端和WebSocket服务器之间的全双工连接中，有时候连接上可能没有数据流。在这个时候，网络中介可能中止连接。<br>使用WebSocket ping和pong能够保持连接打开，为数据流动做好准备。ping和pong可以从打开的WebSocket连接的任一端发起。WebSocket协议支持客户端发起和服务器发起的ping和pong。浏览器或服务器（也可以是两者）都可以在合适的时间间隔内发起ping和pong，保持连接活跃。<strong>注意，我们说的是浏览器而不是WebSocket客户端</strong>：<strong>WebSocket API目前不支持客户端发起的ping和pong</strong>。</p>
+<h3 id="WebSocket缓冲和流量控制"><a href="#WebSocket缓冲和流量控制" class="headerlink" title="WebSocket缓冲和流量控制"></a>WebSocket缓冲和流量控制</h3><p>由于WebSocket应用程序使用全双工连接，你可以控制应用程序向服务器发送数据的速率，这也称作“流量控制”（throttling）。流量控制有助于避免可能受到其他限制影响的网络饱和或者瓶颈，例如互联网带宽和服务器CPU的限制。WebSocket API可以用WebSocket bufferedAmount特性（我们在第2章中讨论过）控制应用程序向服务器发送数据的速率。bufferedAmount特性表示在队列中尚未传输到服务器的字节数。<br>你还可以限制客户端到服务器的连接数，允许服务器根据预先定义的设置确定是接受还是拒绝客户端连接。  </p>
+<h3 id="监控"><a href="#监控" class="headerlink" title="监控"></a>监控</h3><p>为了评估系统的性能，你还可以在必要的时候配置监控工具，跟踪用户活动、服务器性能，以及终止客户端会话  </p>
+<h3 id="容量规划"><a href="#容量规划" class="headerlink" title="容量规划"></a>容量规划</h3><p>在架构中实施WebSocket可以建立灵活、可伸缩的框架。尽管有这样的灵活性，你仍然必须为部署需求做计划，包括规模的考虑，特别是与硬件容量相关的因素。这些领域包括服务器的内存和CPU（不管是启用WebSocket的后端服务器，还是使WebSocket流量能够在客户端和后端服务器之间流动的网关），以及网络优化。<br>此外，有许多基于云的WebSocket服务产品，它们实际上让WebSocket开发人员不需要考虑容量规划。  </p>
+<h3 id="套接字限制"><a href="#套接字限制" class="headerlink" title="套接字限制"></a>套接字限制</h3><p>WebSocket服务器同时打开许多连接。你应该意识到，如果运行一台没有更改过操作系统设置的服务器，可能无法维持几千个以上的套接字。即使还有丰富的CPU和内存资源，你也将会看到无法打开更多文件的错误报告。（记住，在UNIX中，几乎所有资源都是文件，包括套接字！即使没有使用磁盘，也可能看到关于文件的错误信息。）操作系统限制每个用户打开的文件数，默认情况下，这一限制值相当低。这些限制是为了避免滥用许多用户争用相同资源的共享系统。<br>例如，在Liunx上，ulimit-a命令显示当前用户限制，包括最大允许打开文件数。很幸运，在Linux上可以提高这一限制。</p>
+<h3 id="WebSocket应用程序部署检查列表"><a href="#WebSocket应用程序部署检查列表" class="headerlink" title="WebSocket应用程序部署检查列表"></a>WebSocket应用程序部署检查列表</h3><table>
+<thead>
+<tr>
+<th>规划项目</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>WebSocket模拟和备用手段</td>
+<td>确定用户的浏览器和版本确定备用策略是否必要。如果是，使用填充、插件后者Comet备用措施</td>
+</tr>
+<tr>
+<td>反向代理和负载平衡</td>
+<td>确定你想要公开的端口，确定必须使用反向代理的服务器，确定是否可以在firewall上打开一个端口，从而确定是否应该使用反向连接性，确定网络资源负载需求，包括服务器和客户端连接</td>
+</tr>
+<tr>
+<td>用TLS穿越代理和防火墙</td>
+<td>确定可能扰乱WebSocket流量的代理和防火墙；确定因为安全或者连接性原因使用TLS</td>
+</tr>
+<tr>
+<td>持续连接</td>
+<td>确定你想要监控的连接，设置ping间隔以避免连接超时</td>
+</tr>
+<tr>
+<td>缓存和流量控制</td>
+<td>确定流量控制能够改进性能的地方</td>
+</tr>
+<tr>
+<td>监控</td>
+<td>确定监控区域</td>
+</tr>
+<tr>
+<td>硬件容量规划</td>
+<td>确定WebSocket服务器的内存和cpu需求；确定宽带需求；确定服务器的磁盘需求；确定基于云超是否更适合于你的应用部署</td>
+</tr>
+<tr>
+<td>套接字限制</td>
+<td>确定系统需要的鬓发套接字连接数，确定服务器的套接字限制</td>
+</tr>
+</tbody></table>
+<h1 id="WebSocket流量和资源"><a href="#WebSocket流量和资源" class="headerlink" title="WebSocket流量和资源"></a>WebSocket流量和资源</h1><h3 id="WebSocket流量"><a href="#WebSocket流量" class="headerlink" title="WebSocket流量"></a>WebSocket流量</h3><p>研究3个方便的工具：</p>
+<ul>
+<li>Google Chrome开发者工具：Chrome自带的一组HTML5应用程序，你可以用它检查、调试和优化Web应用程序。</li>
+<li>Google Chrome Network Internals（或称“net-internals”）：一组检查网络行为（包括DNS查找、SPDY、HTTP缓存和WebSocket）的工具。<br>在地址栏中键入<strong>chrome：//net-internals</strong>。网络内部工具（net-internals）的用处之一是检查TCP套接字事件。这些TCP套接字用于传输WebSocket和浏览器使用的其他通信协议。<br>说明 在Google Chrome中，URL about：about重定向到chrome：//about。其他浏览器如Mozilla Firefox在它们的about：about页面中列出有用的URL。该页面显示下列内部Chrome实用工具：<br>chrome：//appcache-internals<br>chrome：//blob-internals<br>chrome：//bookmarks<br>chrome：//cache<br>chrome：//chrome-urls<br>chrome：//crashes<br>chrome：//credits<br>chrome：//dns<br>chrome：//downloads<br>chrome：//extensions<br>chrome：//flags<br>chrome：//flash<br>chrome：//gpu-internals<br>chrome：//history<br>chrome：//ipc<br>chrome：//inspect<br>chrome：//media-internals<br>chrome：//memory<br>chrome：//nacl<br>chrome：//net-internals<br>chrome：//view-http-cache<br>chrome：//newtab<br>chrome：//omnibox<br>chrome：//plugins<br>chrome：//policy<br>chrome：//predictors<br>chrome：//profiler<br>chrome：//quota-internals<br>chrome：//settings<br>chrome：//stats<br>chrome：//sync-internals<br>chrome：//terms<br>chrome：//tracing<br>chrome：//version<br>chrome：//print</li>
+<li>Wireshark：用于分析网络协议流量的工具<h3 id="WebSocket服务器"><a href="#WebSocket服务器" class="headerlink" title="WebSocket服务器"></a>WebSocket服务器</h3>虽然你可以让服务器接受WebSocket连接或者编写自己的Websocket服务器，但是有一些现有的实现能够让你在开发WebSocket应用程序时更加轻松。书中列出可用的WebSocket服务器（该列表由http：//refcardz.dzone.com/refcardz/html5-websocket提供）：<br>Alchemy-Websockets（.NET）：<br>http：//alchemywebsockets.net/Apache ActiveMQ：<br>http：//activemq.apache.org/apache-websocket（Apache模块）:<br>https：//github.com/disconnect/ apache-websocket#readmeAPE Project（C）:<br>http：//<a href="http://www.ape-project.org/Autobahn（虚拟用具）" target="_blank" rel="noopener">www.ape-project.org/Autobahn（虚拟用具）</a>:<br>http：//autobahn.ws/Caucho Resin（Java）:<br>http：//<a href="http://www.caucho.com/Cowboy" target="_blank" rel="noopener">www.caucho.com/Cowboy</a>:<br>https：//github.com/extend/cowboyCramp（Ruby）:<br>http：//cramp.in/Diffusion（商业产品）http：//<a href="http://www.pushtechnology.com/homeEM-WebSocket（Ruby）" target="_blank" rel="noopener">www.pushtechnology.com/homeEM-WebSocket（Ruby）</a>:<br>https：//github.com/igrigorik/em-websocketExtendible WebSocket Server（PHP）:<br>http：//github.com/wkjagt/Extendible-Web-Socket-Servergevent-websocket（Python）:<br>http：//<a href="http://www.gelens.org/code/gevent-websocket/GlassFish（Java）" target="_blank" rel="noopener">www.gelens.org/code/gevent-websocket/GlassFish（Java）</a>:<br>https：//glassfish.java.net/Goliath（Ruby）:<br>https：//github.com/postrank-labs/goliathJetty（Java）:<br>http：//jetty.codehaus.org/jetty/jWebsocket（Java）:<br>http：//jwebsocket.org/Kaazing WebSocket Gateway（商业产品）:<br>http：//kaazing.com/libwebsockets（C）:<br>http：//git.warmcat.com/cgi-bin/cgit/libwebsockets/Misultin（Erlang）:<br>https：//github.com/ostinelli/misultinnet.websocket（Go）:<br>http：//code.google.com/p/go.net/websocketNetty（Java）:<br>http：//netty.io/Nugget（.NET）:<br>http：//nugget.codeplex.com/phpdaemon（PHP）:<br>http：//phpdaemon.net/Pusher（云服务）:<br>http：//pusher.com/pywebsockets（Python）:<br>http：//code.google.com/p/pywebsocket/RabbitMQ（Erlang）:<br>https：//github.com/videlalvaro/rabbitmq-websocketsSocket.io（Node.js）:<br>http：//socket.io/SockJS-node（Node）:<br>https：//github.com/sockjs/sockjs-node</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://oldmaspicyrabbit.github.io/blog/2020/02/01/%E3%80%8AHTML5-WebSocket%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E3%80%8B%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0-part-3/" data-id="ck62xtnv3000ozvtodpzbf6c6" data-title="《HTML5 WebSocket权威指南》读书笔记 part 3" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/websocket/" rel="tag">websocket</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/blog/2020/01/31/%E3%80%8AHTML5-WebSocket%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E3%80%8B%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0-part-2/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">《HTML5 WebSocket权威指南》读书笔记 part 2</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/blog/categories/hexo/">hexo</a></li><li class="category-list-item"><a class="category-list-link" href="/blog/categories/web/">web</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/blog/categories/web/booknotes/">booknotes</a></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Github-pages/" rel="tag">Github pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/websocket/" rel="tag">websocket</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/blog/tags/Github-pages/" style="font-size: 10px;">Github pages</a> <a href="/blog/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/blog/tags/websocket/" style="font-size: 20px;">websocket</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/blog/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/blog/archives/2020/01/">January 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/blog/2020/02/01/%E3%80%8AHTML5-WebSocket%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E3%80%8B%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0-part-3/">《HTML5 WebSocket权威指南》读书笔记 part 3</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2020/01/31/%E3%80%8AHTML5-WebSocket%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E3%80%8B%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0-part-2/">《HTML5 WebSocket权威指南》读书笔记 part 2</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2020/01/30/%E3%80%8AHTML5-WebSocket%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E3%80%8B%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0-part-1/">《HTML5 WebSocket权威指南》读书笔记 part 1</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2020/01/29/WebSocket%E5%8D%8F%E8%AE%AE-RFC-part1/">WebSocket协议 RFC part1</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2020/01/28/%E9%83%A8%E7%BD%B2hexo%E5%88%B0GitHub-Pages%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98/">部署hexo到GitHub Pages的一些问题</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 oldmaspicyrabbit<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/blog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/blog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/blog/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/blog/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/blog/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
